@@ -39,15 +39,20 @@ Coded by www.creative-tim.com
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import Billing from "layouts/billing";
-import Notifications from "layouts/notifications";
+import Chat from "layouts/Chat";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import ResetPassword from "layouts/authentication/reset-password";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
 
 const routes = [
+  {
+    route: "/authentication/rest-password",
+    component: <ResetPassword />,
+  },
   {
     type: "collapse",
     name: "Home",
@@ -75,10 +80,10 @@ const routes = [
   {
     type: "collapse",
     name: "Chat",
-    key: "notifications",
+    key: "Chat",
     icon: <Icon fontSize="small">chat</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
+    route: "/Chat",
+    component: <Chat />,
   },
   {
     type: "collapse",
