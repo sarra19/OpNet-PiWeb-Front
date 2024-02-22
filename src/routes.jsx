@@ -34,12 +34,11 @@ Coded by www.creative-tim.com
   10. The `title` key is only for the item with the type of `title` and its used for the title text on the Sidenav.
   10. The `component` key is used to store the component of its route.
 */
-
+/* eslint-disable */
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
-import Billing from "layouts/billing";
-import Chat from "layouts/Chat";
+import Condidacy from "layouts/Condidacy";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
@@ -47,6 +46,8 @@ import ResetPassword from "layouts/authentication/reset-password";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import Interviews from "layouts/Interviews";
+import Chat from "layouts/Chat";
 
 const routes = [
   {
@@ -71,11 +72,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Offers",
-    key: "billing",
+    name: "Condidacy",
+    key: "condidacy",
     icon: <Icon fontSize="small">work</Icon>,
-    route: "/billing",
-    component: <Billing />,
+    route: "/Condidacy",
+    component: <Condidacy />,
   },
   {
     type: "collapse",
@@ -87,11 +88,11 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Compagny",
+    name: "Interviews",
     key: "",
-    icon: <Icon fontSize="small">business</Icon>,
-    route: "",
-    //component: <Notifications />,
+    icon: <Icon fontSize="small">assignment_ind</Icon>,
+    route: "/Interviews",
+    component: <Interviews />,
   },
   {
     type: "collapse",

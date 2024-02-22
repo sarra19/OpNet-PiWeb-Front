@@ -13,27 +13,36 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// @mui material components
-import Grid from "@mui/material/Grid";
+/* eslint-disable */
+
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 
-// Material Dashboard 2 React examples
+// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-function Billing() {
+
+// Overview page components
+import Header from "layouts/profile/components/Header";
+
+
+
+function Overview() {
   return (
     <DashboardLayout>
-      <DashboardNavbar absolute isMini />
-      <MDBox mt={8}>
-        <MDBox mb={3}> </MDBox>
-      </MDBox>
+      <DashboardNavbar />
+      <MDBox mb={2} />
+      <Header>
+        <MDBox mt={5} mb={3}>
+          
+        </MDBox>
+      </Header>
       <Footer />
     </DashboardLayout>
   );
 }
 
-export default Billing;
+export default Overview;
