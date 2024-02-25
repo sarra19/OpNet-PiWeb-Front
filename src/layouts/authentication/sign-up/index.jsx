@@ -1,101 +1,161 @@
+/* eslint-disable */
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDInput from "components/MDInput";
-import MDButton from "components/MDButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 import bgImage from "assets/images/bg-sign-up-cover.jpg";
-import { Select, MenuItem, InputLabel } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import axios from "axios";
-
-import "CSS/Cover.css"; // Import your custom CSS for styling
-/* eslint-disable */
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import ImageIcon from "@mui/icons-material/Image";
+import FileIcon from "@mui/icons-material/Description";
 
 function Cover() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    firstname: { value: "", isValid: true, errorMessage: "" },
+    lastname: { value: "", isValid: true, errorMessage: "" },
+    email: { value: "", isValid: true, errorMessage: "" },
+    password: { value: "", isValid: true, errorMessage: "" },
+    role: { value: "", isValid: true, errorMessage: "" },
+    age: { value: "", isValid: true, errorMessage: "" },
+    city: { value: "", isValid: true, errorMessage: "" },
+    phone: { value: "", isValid: true, errorMessage: "" },
+    speciality: { value: "", isValid: true, errorMessage: "" },
+    institution: { value: "", isValid: true, errorMessage: "" },
+    languages: { value: "", isValid: true, errorMessage: "" },
+    profileImage: { value: "", isValid: true, errorMessage: "" },
+    description: { value: "", isValid: true, errorMessage: "" },
+    skills: { value: "", isValid: true, errorMessage: "" },
+    experience: { value: "", isValid: true, errorMessage: "" },
+    formation: { value: "", isValid: true, errorMessage: "" },
+    certificates: { value: "", isValid: true, errorMessage: "" },
+    cV: { value: "", isValid: true, errorMessage: "" }
+  });
 
-  const handleNextStep = () => {
-    setActiveStep((prevStep) => prevStep + 1);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(Object.keys(formData).length / itemsPerPage);
 
-  const handlePrevStep = () => {
-    setActiveStep((prevStep) => prevStep - 1);
-  };
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    let isValid = true;
+    let errorMessage = "";
+
+    // Validation logic
+    if (value.trim() === "") {
+      isValid = false;
+      errorMessage = "This field is required";
+    } else {
+      switch (name) {
+        case "email":
+          // Check if email format is valid
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) {
+            isValid = false;
+            errorMessage = "Please enter a valid email address";
+          }
+          break;
+        case "age":
+          // Check if age is a number between 1 and 150
+          const ageValue = parseInt(value);
+          if (isNaN(ageValue) || ageValue < 1 || ageValue > 150) {
+            isValid = false;
+            errorMessage = "Please enter a valid age between 1 and 150";
+          }
+          break;
+        case "phone":
+          // Check if phone number format is valid
+          const phoneRegex = /^\d{10}$/;
+          if (!phoneRegex.test(value)) {
+            isValid = false;
+            errorMessage = "Please enter a valid 10-digit phone number";
+          }
+          break;
+        case "firstname":
+        case "lastname":
+          // Check if firstname or lastname contains only letters
+          const onlyLettersRegex = /^[A-Za-z]+$/;
+          if (!onlyLettersRegex.test(value)) {
+            isValid = false;
+            errorMessage = "Only letters are allowed";
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (name === "profileImage" || name === "cV") {
+      // If the target is a file input, set the file name to the state
+      setFormData({
+        ...formData,
+        [name]: { value: files[0].name, isValid, errorMessage }
+      });
+    } else {
+      // For other inputs, update the state with the value and its validation status
+      setFormData({
+        ...formData,
+        [name]: { value, isValid, errorMessage }
+      });
+    }
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Validation check before submitting
+      const isFormValid = Object.values(formData).every((field) => field.isValid);
+      if (!isFormValid) {
+        alert("Please fill out all required fields correctly.");
+        return;
+      }
+
       const response = await axios.post("http://localhost:5000/user/add", formData);
       console.log(response.data);
-      // Optionally, you can redirect the user after successful sign-up
+      // Optionally, you can redirect the user after successful sign-in
     } catch (error) {
+      console.error("Error signing in:", error);
       if (error.response) {
-        // Erreur de réponse du serveur avec un statut de réponse hors de la plage 2xx
-        console.error("Error response from server:", error.response.data);
+        // Server responded with a status code other than 2xx
+        console.error("Server responded with:", error.response.status, error.response.data);
       } else if (error.request) {
-        // La requête a été faite mais aucune réponse n'a été reçue
+        // Request was made but no response was received
         console.error("No response received:", error.request);
       } else {
-        // Une erreur est survenue lors de la configuration de la requête
-        console.error("Error setting up the request:", error.message);
+        // Something else went wrong
+        console.error("Error:", error.message);
       }
     }
   };
-  
 
-  const steps = [
-    {
-      title: "Join us today",
-      subtitle: "Enter your coordinates to register",
-      fields: [
-        { label: "First Name", type: "text", placeholder: "Enter your First Name" },
-        { label: "Last Name", type: "text", placeholder: "Enter your Last Name" },
-        {
-          label: "Professional Status",
-          placeholder: "Enter your Professional Status",
-          type: "select",
-          options: ["admin", "student", "teacher", "company", "subadmin", "alumni"],
-        },
-        { label: "Email", type: "email", placeholder: "Enter your Email" },
-        { label: "Password", type: "password", placeholder: "Enter your Password" },
-        { label: "Confirm Password", type: "password", placeholder: "Confirm your Password" },
-      ],
-    },
-    {
-      title: "Personal Information",
-      subtitle: "Provide your personal details",
-      fields: [
-        { label: "Age", type: "number", placeholder: "Enter your Age" },
-        { label: "City", type: "text", placeholder: "Enter your City" },
-        { label: "Phone", type: "number", placeholder: "Enter your Phone number" },
-        { label: "Speciality", type: "text", placeholder: "Computer Engineer, Civil Engineer, Business.." },
-        { label: "Institution", type: "text", placeholder: "Enter your Institution" },
-        { label: "Languages", type: "text", placeholder: "Enter your Languages" },
-      ],
-    },
-    {
-      title: "Profile Information",
-      subtitle: "Add your profile details",
-      fields: [
-        { label: "Profile Image", type: "file" },
-        { label: "Description", type: "text", placeholder: "Speak about yourself" },
-      ],
-    },
-  ];
-
-  const currentStep = steps[activeStep];
-
-  const handleFieldChange = (label, value) => {
-    setFormData({ ...formData, [label]: value });
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  const isLastStep = activeStep === steps.length - 1;
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
 
-  const isSignUpDisabled = isLastStep && Object.values(formData).some((value) => value === "");
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages;
+
+  const fileInputLabelStyle = {
+    backgroundColor: '#E82227',
+    color: 'white',
+    padding: '8px 16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  };
 
   return (
     <CoverLayout image={bgImage}>
@@ -112,107 +172,139 @@ function Cover() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            {currentStep && currentStep.title}
+            Join us today
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            {currentStep && currentStep.subtitle}
+            Enter your email and password to register
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form" onSubmit={handleSubmit}>
-            {currentStep && currentStep.fields.map((field, index) => (
-              <MDBox key={index} mb={2}>
-                {field.type === "select" ? (
-                  <div>
-                    <InputLabel>{field.label}</InputLabel>
-                    <Select
-                      value={formData[field.label] || ""}
-                      onChange={(e) => handleFieldChange(field.label, e.target.value)}
-                      fullWidth
-                      variant="standard"
-                      IconComponent={ArrowDropDownIcon}
-                      SelectDisplayProps={{
-                        style: { display: "flex", alignItems: "center" },
-                      }}
-                    >
-                      {/* Map options */}
-                      {field.options.map((option, index) => (
-                        <MenuItem key={index} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </div>
-                ) : (
-                  <>
-                    {field.type === "file" ? (
-                      <div className="file-input-container">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleFieldChange(field.label, e.target.files[0])}
-                        />
-                        <label htmlFor="profile-image" className="upload-button">
-                          Upload Profile Image
-                        </label>
-                      </div>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              {Object.entries(formData)
+                .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                .map(([key, value]) => (
+                  <Grid item xs={12} key={key}>
+                    {key === "role" ? (
+                      <FormControl fullWidth>
+                        <InputLabel>{key.charAt(0).toUpperCase() + key.slice(1)}</InputLabel>
+                        <Select
+                          name={key}
+                          value={value.value}
+                          onChange={handleChange}
+                          variant="outlined"
+                          size="small"
+                        >
+                          <MenuItem value="">Select Role</MenuItem>
+                          <MenuItem value="admin">Admin</MenuItem>
+                          <MenuItem value="subadmin">Subadmin</MenuItem>
+                          <MenuItem value="teacher">Teacher</MenuItem>
+                          <MenuItem value="student">Student</MenuItem>
+                          <MenuItem value="alumni">Alumni</MenuItem>
+                        </Select>
+                      </FormControl>
                     ) : (
-                      <MDInput
-                        type={field.type}
-                        label={field.label}
-                        variant="standard"
-                        fullWidth
-                        value={formData[field.label] || ""}
-                        onChange={(e) => handleFieldChange(field.label, e.target.value)}
-                        placeholder={field.placeholder}
-                      />
+                      <React.Fragment>
+                        <TextField
+                          fullWidth
+                          label={key.charAt(0).toUpperCase() + key.slice(1)}
+                          name={key}
+                          value={value.value}
+                          onChange={handleChange}
+                          type={key === "password" ? "password" : "text"}
+                          error={!value.isValid}
+                          helperText={value.errorMessage}
+                        />
+                      </React.Fragment>
                     )}
-                  </>
-                )}
-              </MDBox>
-            ))}
-            <MDBox mt={4} mb={1}>
-              <MDButton
-                variant="gradient"
-                color="info"
-                fullWidth
-                onClick={handleNextStep}
-                disabled={isSignUpDisabled}
-              >
-                {isLastStep ? "Sign Up" : "Next"}
-              </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              {activeStep > 0 && (
-                <MDButton variant="text" color="info" onClick={handlePrevStep}>
-                  Back
-                </MDButton>
-              )}
-            </MDBox>
-            {isLastStep && (
-              <MDBox display="flex" alignItems="center" ml={-1}>
-                <Checkbox />
-                <MDTypography
-                  variant="button"
-                  fontWeight="regular"
-                  color="text"
-                  sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-                >
-                  &nbsp;&nbsp;I agree the&nbsp;
-                </MDTypography>
-                <MDTypography
-                  component="a"
-                  href="#"
-                  variant="button"
-                  fontWeight="bold"
-                  color="info"
-                  textGradient
-                >
-                  Terms and Conditions
-                </MDTypography>
-              </MDBox>
+                    {/* Additional file upload inputs */}
+                    {key === "profileImage" || key === "cV" ? (
+                      <Grid container spacing={2} alignItems="center" style={{ marginTop: 6 }}>
+                        <Grid item>
+                          <input
+                            type="file"
+                            name={key}
+                            id={key}
+                            onChange={handleChange}
+                            style={{ display: 'none' }}
+                          />
+                          <label htmlFor={key} className="custom-file-label" style={fileInputLabelStyle}>
+                            {key === "profileImage" ? (
+                              <React.Fragment>
+                                <ImageIcon fontSize="small" /> Add a photo
+                              </React.Fragment>
+                            ) : (
+                              <React.Fragment>
+                                <FileIcon fontSize="small" /> Add a CV
+                              </React.Fragment>
+                            )}
+                          </label>
+                        </Grid>
+                        <Grid item>
+                          {/* Display the filename if selected */}
+                          {formData[key].value && (
+                            <MDTypography variant="body2" color="textSecondary">
+                              {formData[key].value}
+                            </MDTypography>
+                          )}
+                        </Grid>
+                      </Grid>
+                    ) : null}
+                  </Grid>
+                ))}
+            </Grid>
+            {isLastPage && (
+              <React.Fragment>
+                <MDBox display="flex" alignItems="center" ml={-1}>
+                  <Checkbox />
+                  <MDTypography
+                    variant="button"
+                    fontWeight="regular"
+                    color="text"
+                    sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
+                  >
+                    &nbsp;&nbsp;I agree the&nbsp;
+                  </MDTypography>
+                  <MDTypography
+                    component="a"
+                    href="#"
+                    variant="button"
+                    fontWeight="bold"
+                    color="info"
+                    textGradient
+                  >
+                    Terms and Conditions
+                  </MDTypography>
+                </MDBox>
+                <MDBox mt={4} mb={1}>
+                  <Button style={{ backgroundColor: "#E82227", color: "white" }} variant="contained" fullWidth type="submit">
+                    Sign In
+                  </Button>
+                </MDBox>
+              </React.Fragment>
             )}
-          </MDBox>
+          </form>
+        </MDBox>
+        {/* Pagination section */}
+        <MDBox display="flex" justifyContent="space-between" mb={2}>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={isFirstPage}
+            onClick={handlePreviousPage}
+            style={{ color: "#E82227" }}
+          >
+            Back
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={isLastPage}
+            onClick={handleNextPage}
+            style={{ color: "#E82227" }}
+          >
+            Next
+          </Button>
         </MDBox>
       </Card>
     </CoverLayout>
