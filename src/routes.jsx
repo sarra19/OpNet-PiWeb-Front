@@ -43,6 +43,7 @@ import Notifications from "layouts/notifications";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Interview from "layouts/Interview";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -71,6 +72,14 @@ const routes = [
     icon: <Icon fontSize="small">work</Icon>,
     route: "/billing",
     component: <Billing />,
+  },
+  {
+    type: "collapse",
+    name: "Entretien",
+    key: "Interview",
+    icon: <Icon fontSize="small">star</Icon>,
+    route: "/Entretien",
+    component: <Interview />,
   },
   {
     type: "collapse",
