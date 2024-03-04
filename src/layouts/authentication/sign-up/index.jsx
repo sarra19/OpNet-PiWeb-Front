@@ -10,6 +10,7 @@ import bgImage from "assets/images/bg-sign-up-cover.jpg";
 import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import API_URLS from "../../../apiUrls";
 
 function Cover() {
   const roles = ["Student", "Teacher", "Alumni", "Admin", "Subadmin", "Company"]; // List of roles
@@ -70,7 +71,7 @@ function Cover() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/user/add", {
+      const response = await fetch(API_URLS.addUser, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

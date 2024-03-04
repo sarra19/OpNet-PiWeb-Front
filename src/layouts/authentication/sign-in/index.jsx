@@ -18,6 +18,7 @@ import MDButton from "components/MDButton";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpg";
 import { useNavigate } from "react-router-dom";
+import API_URLS from "../../../apiUrls";
 
 function Basic() {
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ function Basic() {
   const navigate = useNavigate();
     const handleSignIn = async () => {
     try {
-      const response = await axios.post("/user/login", {
+      const response = await axios.post(API_URLS.login, {
         email: email,
         password: password
       });
