@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Grid from "@mui/material/Grid";
@@ -12,8 +13,9 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogActions from "@mui/material/DialogActions";
+import { Link } from "react-router-dom";
+import Calendrier from "./calendrier";
 import "./index.css";
-/* eslint-disable */
 function Interview() {
   const [searchInput, setSearchInput] = useState("");
   const [interviews, setInterviews] = useState([]);
@@ -40,7 +42,7 @@ function Interview() {
     const year = date.getUTCFullYear().toString().slice(-2); // Obtenir les deux derniers chiffres de l'année
     const hours = date.getUTCHours().toString().padStart(2, '0');
     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
+    return `${day}/${month}/${year}   ${hours}:${minutes}`;
   };
 
   const handleSearchInputChange = (event) => {
@@ -97,6 +99,9 @@ function Interview() {
             <Typography variant="h2" mb={7}>
               Vos entretiens
             </Typography>
+            <Button style={{ color: 'blue' }}>
+              <Link to={`/calendrier`}>Voir calendrier</Link>
+            </Button>
             <Grid container spacing={2} mb={13}>
             {filteredInterviews.map((interview, index) => (
                 <Grid item key={interview.id || index } xs={12} sm={6} md={4}>

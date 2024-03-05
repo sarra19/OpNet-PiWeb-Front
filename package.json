@@ -25,6 +25,7 @@
     "prop-types": "15.8.1",
     "proxy": "^2.1.1",
     "react": "18.2.0",
+    "react-big-calendar": "^1.11.1",
     "react-chartjs-2": "5.2.0",
     "react-dom": "18.2.0",
     "react-github-btn": "1.4.0",
