@@ -11,10 +11,10 @@ import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import API_URLS from "../../../apiUrls";
-
+import ReCAPTCHA from "react-google-recaptcha";
 function Cover() {
   const roles = ["Student", "Teacher", "Alumni", "Admin", "Subadmin", "Company"]; // List of roles
-
+const [capVal,setCapVal] = useState(null)
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -206,7 +206,11 @@ function Cover() {
               </Grid>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton type="submit" variant="gradient" color="info" fullWidth>
+            <ReCAPTCHA
+            sitekey="6LdXhYspAAAAABmF7uoESPX5wt57MZEsNAdWbC4h"
+            onChange={(val) => setCapVal(val)}
+            />
+              <MDButton disabled={!capVal} type="submit" variant="gradient" color="info" fullWidth>
                 Sign up
               </MDButton>
             </MDBox>

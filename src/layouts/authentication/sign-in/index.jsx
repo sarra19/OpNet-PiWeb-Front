@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
@@ -19,31 +19,79 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpg";
 import { useNavigate } from "react-router-dom";
 import API_URLS from "../../../apiUrls";
+import { GoogleLogin } from 'react-google-login';
+import { token } from "stylis";
 
 function Basic() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
-  const navigate = useNavigate();
-    const handleSignIn = async () => {
+
+
+  
+  const handleGoogleLoginFailure = (error) => {
+    // Gérez les erreurs après une connexion échouée avec Google
+    console.error("Erreur lors de la connexion avec Google:", error);
+  };
+  
+
+
+  const handleGoogleLoginSuccess = (response) => {
+    const token = response.tokenId;
+    
+    // Envoyer le jeton au backend
+    sendTokenToBackend(token);
+    console.log("Connexion réussie avec Google:", response);
+
+  };
+  
+  axios.post('/api/login/google', { access_token: token })
+  .then(response => {
+    // Traitez la réponse du backend ici
+    console.log("Réponse du backend:", response.data);
+    
+    // Par exemple, vous pouvez stocker le jeton JWT retourné dans le stockage local
+    localStorage.setItem('token', response.data.token);
+  })
+  .catch(error => {
+    // Gérez les erreurs en cas d'échec de la requête
+    console.error("Erreur lors de la réception de la réponse du backend:", error);
+    
+    // Par exemple, affichez un message d'erreur à l'utilisateur
+    alert("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+  });
+
+
+  const handleSignIn = async () => {
     try {
+      if (!email || !password) {
+        console.error("Veuillez saisir votre email et votre mot de passe.");
+        return;
+      }
+
       const response = await axios.post(API_URLS.login, {
         email: email,
         password: password
       });
 
-      console.log(response.data);
       if (response.data.redirectUrl) {
-        navigate(response.data.redirectUrl); // Utilisez navigate pour la redirection
+        const userId = response.data.userId;
+        localStorage.setItem("userId", userId);
+        navigate(response.data.redirectUrl);
+      } else {
+        console.error("La connexion a échoué.");
       }
     } catch (error) {
       console.error("Erreur lors de la connexion:", error);
     }
   };
+
+  
 
   return (
     <BasicLayout image={bgImage}>
@@ -120,6 +168,17 @@ function Basic() {
                 </MDTypography>
               </MDTypography>
             </MDBox>
+            <MDBox mt={2} textAlign="center">
+             {/*  */}
+             <GoogleLogin
+  clientId="895390000373-tboh2opauhrslulnr60d5p58v8qdhbhs.apps.googleusercontent.com"
+  buttonText="Se connecter avec Google"
+  onSuccess={handleGoogleLoginSuccess}
+  onFailure={handleGoogleLoginFailure}
+  cookiePolicy={'single_host_origin'}
+/>
+
+            </MDBox>
           </MDBox>
         </MDBox>
       </Card>
@@ -128,4 +187,3 @@ function Basic() {
 }
 
 export default Basic;
-

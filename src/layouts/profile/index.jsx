@@ -1,48 +1,50 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 /* eslint-disable */
-
-
-// Material Dashboard 2 React components
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import MDBox from "components/MDBox";
-
-// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-
-// Overview page components
-import Header from "layouts/profile/components/Header";
-
-
-
 function Overview() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // Retrieve the user ID from localStorage
+        const userId = localStorage.getItem("userId");
+        
+        // Make a request to fetch the user profile data using the stored user ID
+        const response = await axios.get(`http://localhost:5000/user/profile/${userId}`);
+        
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox mb={2} />
-      <Header>
-        <MDBox mt={5} mb={3}>
-          
+      {user && (
+        <MDBox>
+          <div>
+            <h2>User Details</h2>
+            <p>Name: {user.firstname} {user.lastname}</p>
+            <p>Email: {user.email}</p>
+            {/* Add other user details here */}
+          </div>
         </MDBox>
-      </Header>
+      )}
       <Footer />
     </DashboardLayout>
   );
 }
 
 export default Overview;
+
