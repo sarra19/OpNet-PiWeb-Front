@@ -36,19 +36,22 @@ function Basic() {
 
   const handleSignIn = async () => {
     try {
-      if (!email || !password) {
-        console.error("Veuillez saisir votre email et votre mot de passe.");
-        return;
-      }
-
+      // Effectuer la requête de connexion et obtenir la réponse
       const response = await axios.post(API_URLS.login, {
         email: email,
         password: password
       });
-
-      if (response.data.redirectUrl) {
+  
+      // Vérifier si la connexion est réussie et si la réponse contient les informations nécessaires
+      if (response.data.redirectUrl && response.data.userId && response.data.userRole) {
         const userId = response.data.userId;
+        const userRole = response.data.userRole;
+  
+        // Stocker les valeurs dans localStorage
         localStorage.setItem("userId", userId);
+        localStorage.setItem("userRole", userRole);
+  
+        // Naviguer vers la page de redirection
         navigate(response.data.redirectUrl);
       } else {
         console.error("La connexion a échoué.");
@@ -57,6 +60,7 @@ function Basic() {
       console.error("Erreur lors de la connexion:", error);
     }
   };
+  
   let [searchParams] = useSearchParams();
   const [user, setUser] = useState({});
   const emailParam = searchParams.get("email"); // Changement du nom de la variable pour éviter la confusion avec l'état 'email'
